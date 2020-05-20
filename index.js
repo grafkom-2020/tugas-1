@@ -67,8 +67,16 @@ function main() {
   // Definisi Shaders
   var leftVertexShaderCode = `
   attribute vec2 aPosition;
+  uniform float angle;
   void main(void) {
-    gl_Position = vec4(aPosition, -0.5, 1.0);
+    float a = radians(angle);
+    mat4 rotation = mat4(
+      cos(a), sin(a), 0, 0,
+      -sin(a), cos(a), 0, 0,
+      0, 0, 1, 0,
+      0, 0, 0, 1
+    );
+    gl_Position = rotation * vec4(aPosition, 0.0, 1.0);
   }
 `
 var leftFragmentShaderCode = `
@@ -81,9 +89,54 @@ var leftFragmentShaderCode = `
     attribute vec3 aPosition;
     attribute vec3 aColor;
     varying vec3 vColor;
+    uniform float angleX;
+    uniform float angleY;
+    uniform float aspectRatio;
     void main(void) {
       vColor = aColor;
-      gl_Position = vec4(aPosition.xy, aPosition.z - 1.0, 1.0);
+      float ax = radians(angleX);
+      float ay = radians(angleY);
+      mat4 rx = mat4(
+        1, 0, 0, 0,
+        0, cos(ax), sin(ax), 0,
+        0, -sin(ax), cos(ax), 0,
+        0, 0, 0, 1
+      );
+      mat4 ry = mat4(
+        cos(ay), 0, -sin(ay), 0,
+        0, 1, 0, 0,
+        sin(ay), 0, cos(ay), 0,
+        0, 0, 0, 1
+      );
+      mat4 translate = mat4(
+        1, 0, 0, 0,
+        0, 1, 0, 0,
+        0, 0, 1, 0,
+        0, 0, -1.5, 1
+      );
+
+      mat4 model = translate * ry * rx;
+      mat4 view = mat4(
+        1, 0, 0, 0,
+        0, 1, 0, 0,
+        0, 0, 1, 0,
+        0, 0, 0, 1
+      );
+      
+      // Proyeksi perspektif
+      float fov = radians(60.0);
+      float f = 1.0 / tan(fov/2.0);
+      float near = 1.0;
+      float far = 50.0;
+      float rangeInv = 1.0 / (near - far);
+      mat4 projection = mat4(
+        f / aspectRatio, 0, 0, 0,
+        0, f, 0, 0,
+        0, 0, (near + far) * rangeInv, near * far * rangeInv * 2.0,
+        0, 0, -1, 0
+      );
+
+      gl_Position = projection * view * model * vec4(aPosition, 1.0);
     }
   `
   var rightFragmentShaderCode = `
@@ -101,40 +154,56 @@ var leftFragmentShaderCode = `
   var fragmentShader = leftGL.createShader(leftGL.FRAGMENT_SHADER);
   leftGL.shaderSource(fragmentShader, leftFragmentShaderCode);
   leftGL.compileShader(fragmentShader);
-  var leftShaderProgram = leftGL.createProgram();
-  leftGL.attachShader(leftShaderProgram, vertexShader);
-  leftGL.attachShader(leftShaderProgram, fragmentShader);
-  leftGL.linkProgram(leftShaderProgram);
-  leftGL.useProgram(leftShaderProgram);
+  var leftProgram = leftGL.createProgram();
+  leftGL.attachShader(leftProgram, vertexShader);
+  leftGL.attachShader(leftProgram, fragmentShader);
+  leftGL.linkProgram(leftProgram);
+  leftGL.useProgram(leftProgram);
   var vertexShader = rightGL.createShader(rightGL.VERTEX_SHADER);
   rightGL.shaderSource(vertexShader, rightVertexShaderCode);
   rightGL.compileShader(vertexShader);
   var fragmentShader = rightGL.createShader(rightGL.FRAGMENT_SHADER);
   rightGL.shaderSource(fragmentShader, rightFragmentShaderCode);
   rightGL.compileShader(fragmentShader);
-  var rightShaderProgram = rightGL.createProgram();
-  rightGL.attachShader(rightShaderProgram, vertexShader);
-  rightGL.attachShader(rightShaderProgram, fragmentShader);
-  rightGL.linkProgram(rightShaderProgram);
-  rightGL.useProgram(rightShaderProgram);
+  var rightProgram = rightGL.createProgram();
+  rightGL.attachShader(rightProgram, vertexShader);
+  rightGL.attachShader(rightProgram, fragmentShader);
+  rightGL.linkProgram(rightProgram);
+  rightGL.useProgram(rightProgram);
 
   // Pengikatan VBO dan pengarahan pointer atribut posisi dan warna
   leftGL.bindBuffer(leftGL.ARRAY_BUFFER, leftVertexBuffer);
-  var leftPosition = leftGL.getAttribLocation(leftShaderProgram, "aPosition");
+  var leftPosition = leftGL.getAttribLocation(leftProgram, "aPosition");
   leftGL.vertexAttribPointer(leftPosition, 2, leftGL.FLOAT, false, 2 * Float32Array.BYTES_PER_ELEMENT, 0);
   leftGL.enableVertexAttribArray(leftPosition);
   rightGL.bindBuffer(rightGL.ARRAY_BUFFER, rightVertexBuffer);
-  var rightPosition = rightGL.getAttribLocation(rightShaderProgram, "aPosition");
+  var rightPosition = rightGL.getAttribLocation(rightProgram, "aPosition");
   rightGL.vertexAttribPointer(rightPosition, 3, rightGL.FLOAT, false, 6 * Float32Array.BYTES_PER_ELEMENT, 0);
   rightGL.enableVertexAttribArray(rightPosition);
-  var color = rightGL.getAttribLocation(rightShaderProgram, "aColor");
+  var color = rightGL.getAttribLocation(rightProgram, "aColor");
   rightGL.vertexAttribPointer(color, 3, rightGL.FLOAT, false, 6 * Float32Array.BYTES_PER_ELEMENT, 3 * Float32Array.BYTES_PER_ELEMENT);
   rightGL.enableVertexAttribArray(color);
 
+  // Parameter animasi
+  var leftAngle = 0.0;
+  var leftAngleLoc = leftGL.getUniformLocation(leftProgram, 'angle');
+  var rightAngleX = 0.0;
+  var rightAngleXLoc = rightGL.getUniformLocation(rightProgram, 'angleX');
+  var rightAngleY = 0.0;
+  var rightAngleYLoc = rightGL.getUniformLocation(rightProgram, 'angleY');
+  var aspectRatioLoc = rightGL.getUniformLocation(rightProgram, 'aspectRatio');
+  rightGL.uniform1f(aspectRatioLoc, leftGL.canvas.width/leftGL.canvas.height);
+
   // Persiapan tampilan layar dan mulai menggambar secara berulang (animasi)
   function render() {
+    leftAngle -= 0.5;
+    leftGL.uniform1f(leftAngleLoc, leftAngle);
     leftGL.clear(leftGL.COLOR_BUFFER_BIT);
     leftGL.drawArrays(leftGL.TRIANGLE_FAN, 0, 4);
+    rightAngleX += 0.25;
+    rightGL.uniform1f(rightAngleXLoc, rightAngleX);
+    rightAngleY += 0.75;
+    rightGL.uniform1f(rightAngleYLoc, rightAngleY);
     rightGL.clear(rightGL.COLOR_BUFFER_BIT | rightGL.DEPTH_BUFFER_BIT);
     rightGL.drawArrays(rightGL.TRIANGLES, 0, 36);
     requestAnimationFrame(render);
@@ -143,6 +212,6 @@ var leftFragmentShaderCode = `
   leftGL.viewport(0, (leftGL.canvas.height - leftGL.canvas.width)/2, leftGL.canvas.width, leftGL.canvas.width);
   rightGL.clearColor(0.0, 0.0, 0.0, 1.0);
   rightGL.enable(rightGL.DEPTH_TEST);
-  rightGL.viewport(0, (leftGL.canvas.height - leftGL.canvas.width)/2, rightGL.canvas.width, rightGL.canvas.width);
+  rightGL.viewport(0, 0, rightGL.canvas.width, rightGL.canvas.height);
   render();
 }
