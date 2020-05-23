@@ -8,10 +8,12 @@ function main() {
 
   // Inisiasi verteks persegi
   var rectangleVertices = [
-    -0.5,  0.5,
-    -0.5, -0.5,
-    0.5, -0.5,
-    0.5,  0.5
+    -0.5,  0.5, 0.0, 1.0, 0.0, 0.0,
+    -0.5, -0.5, 0.0, 1.0, 0.0, 0.0,
+    0.5, -0.5, 0.0, 1.0, 0.0, 0.0,
+    0.5, -0.5, 0.0, 1.0, 0.0, 0.0,
+    0.5,  0.5, 0.0, 1.0, 0.0, 0.0, 
+    -0.5,  0.5, 0.0, 1.0, 0.0, 0.0
   ];
 
   // Inisiasi verteks kubus
@@ -54,10 +56,24 @@ function main() {
   quad(5, 4, 7, 6); // Kubus belakang
   quad(6, 2, 1, 5); // Kubus bawah
 
+  // Inisiasi verteks bidang datar (alas obyek)
+  var baseVertices = [
+    -5.0, -0.5, -5.0, 0.06666666667, 0.5058823529, 0.09411764706,
+    5.0, -0.5, -5.0, 0.06666666667, 0.5058823529, 0.09411764706,
+    -5.0, -0.5, 5.0, 0.06666666667, 0.5058823529, 0.09411764706,
+    -5.0, -0.5, 5.0, 0.06666666667, 0.5058823529, 0.09411764706,
+    5.0, -0.5, 5.0, 0.06666666667, 0.5058823529, 0.09411764706,
+    5.0, -0.5, -5.0, 0.06666666667, 0.5058823529, 0.09411764706
+  ];
+  // Warna di atas ( 0.06666666667, 0.5058823529, 0.09411764706 ) sama dengan #118118
+
+  // Kumpulkan semua verteks untuk frame sebelah kiri
+  var leftVertices = rectangleVertices.concat(baseVertices);
+
   // Inisiasi VBO (Vertex Buffer Object)
   var leftVertexBuffer = leftGL.createBuffer();
   leftGL.bindBuffer(leftGL.ARRAY_BUFFER, leftVertexBuffer);
-  leftGL.bufferData(leftGL.ARRAY_BUFFER, new Float32Array(rectangleVertices), leftGL.STATIC_DRAW);
+  leftGL.bufferData(leftGL.ARRAY_BUFFER, new Float32Array(leftVertices), leftGL.STATIC_DRAW);
   leftGL.bindBuffer(leftGL.ARRAY_BUFFER, null);
   var rightVertexBuffer = rightGL.createBuffer();
   rightGL.bindBuffer(rightGL.ARRAY_BUFFER, rightVertexBuffer);
@@ -66,17 +82,19 @@ function main() {
 
   // Definisi Shaders
   var leftVertexShaderCode = `
-  attribute vec2 aPosition;
-  uniform float angle;
+  attribute vec3 aPosition;
+  attribute vec3 aColor;
+  varying vec3 vColor;
   void main(void) {
-    float a = radians(angle);
-    gl_Position = vec4(aPosition, 0.0, 1.0);
+    vColor = aColor;
+    gl_Position = vec4(aPosition, 1.0);
   }
 `
 var leftFragmentShaderCode = `
   precision mediump float;
+  varying vec3 vColor;
   void main() {
-    gl_FragColor = vec4(0.3, 0.3, 0.3, 1.0);
+    gl_FragColor = vec4(vColor, 1.0);
   }
 `
   var rightVertexShaderCode = `
@@ -152,15 +170,18 @@ var leftFragmentShaderCode = `
   // Pengikatan VBO dan pengarahan pointer atribut posisi dan warna
   leftGL.bindBuffer(leftGL.ARRAY_BUFFER, leftVertexBuffer);
   var leftPosition = leftGL.getAttribLocation(leftProgram, "aPosition");
-  leftGL.vertexAttribPointer(leftPosition, 2, leftGL.FLOAT, false, 2 * Float32Array.BYTES_PER_ELEMENT, 0);
+  leftGL.vertexAttribPointer(leftPosition, 3, leftGL.FLOAT, false, 6 * Float32Array.BYTES_PER_ELEMENT, 0);
   leftGL.enableVertexAttribArray(leftPosition);
+  var leftColor = leftGL.getAttribLocation(leftProgram, 'aColor');
+  leftGL.vertexAttribPointer(leftColor, 3, leftGL.FLOAT, false, 6 * Float32Array.BYTES_PER_ELEMENT, 3 * Float32Array.BYTES_PER_ELEMENT);
+  leftGL.enableVertexAttribArray(leftColor);
   rightGL.bindBuffer(rightGL.ARRAY_BUFFER, rightVertexBuffer);
   var rightPosition = rightGL.getAttribLocation(rightProgram, "aPosition");
   rightGL.vertexAttribPointer(rightPosition, 3, rightGL.FLOAT, false, 6 * Float32Array.BYTES_PER_ELEMENT, 0);
   rightGL.enableVertexAttribArray(rightPosition);
-  var color = rightGL.getAttribLocation(rightProgram, "aColor");
-  rightGL.vertexAttribPointer(color, 3, rightGL.FLOAT, false, 6 * Float32Array.BYTES_PER_ELEMENT, 3 * Float32Array.BYTES_PER_ELEMENT);
-  rightGL.enableVertexAttribArray(color);
+  var rightColor = rightGL.getAttribLocation(rightProgram, "aColor");
+  rightGL.vertexAttribPointer(rightColor, 3, rightGL.FLOAT, false, 6 * Float32Array.BYTES_PER_ELEMENT, 3 * Float32Array.BYTES_PER_ELEMENT);
+  rightGL.enableVertexAttribArray(rightColor);
 
   // Parameter proyeksi
   var aspectRatioLoc = rightGL.getUniformLocation(rightProgram, 'aspectRatio');
@@ -169,7 +190,7 @@ var leftFragmentShaderCode = `
   // Persiapan tampilan layar dan mulai menggambar secara berulang (animasi)
   function render() {
     leftGL.clear(leftGL.COLOR_BUFFER_BIT);
-    leftGL.drawArrays(leftGL.TRIANGLE_FAN, 0, 4);
+    leftGL.drawArrays(leftGL.TRIANGLES, 0, 12);
     rightGL.clear(rightGL.COLOR_BUFFER_BIT | rightGL.DEPTH_BUFFER_BIT);
     rightGL.drawArrays(rightGL.TRIANGLES, 0, 36);
     requestAnimationFrame(render);
