@@ -24,6 +24,12 @@ Menghentikan animasi rotasi pada kedua kanvas dengan memodifikasi definisi `attr
 
 ## Hackathon #3
 
-Menambah sebuah bidang datar (alas obyek) bewarna `#118118`, yakni r: `17`, g: `129`, b: `24` pada skala 0-255, atau r: `0.06666666667` g:`0.5058823529` b:`0.09411764706` pada skala 0-1); Warna kotak pada frame sebelah kiri yang awalnya abu-abu sekalian saya ubah jadi merah supaya identik dengan warna kotak pada frame sebelah kanan; Baik frame sebelah kiri maupun kanan telah saya atur agar sama-sama memiliki bidang datar (alas obyek), hanya saja tidak terlihat pada frame sebelah kiri, karena tidak ada perspektif. Kamera pada frame sebelah kanan saya letakkan di posisi `-5.5`;
+Menambah sebuah bidang datar (alas obyek) bewarna `#118118`, yakni r: `17`, g: `129`, b: `24` pada skala 0-255, atau r: `0.06666666667` g:`0.5058823529` b:`0.09411764706` pada skala 0-1); Warna kotak pada kanvas sebelah kiri yang awalnya abu-abu sekalian saya ubah jadi merah supaya identik dengan warna kotak pada kanvas sebelah kanan; Baik kanvas sebelah kiri maupun kanan telah saya atur agar sama-sama memiliki bidang datar (alas obyek), hanya saja tidak terlihat pada kanvas sebelah kiri, karena tidak ada perspektif. Kamera pada kanvas sebelah kanan saya letakkan di posisi `-5.5`;
 
 ![Hackathon #3](hackathon3.jpg)
+
+## Hackathon #4
+
+Mengimplementasikan pencahayaan ambient dengan nilai (intensitas) sebesar `0.2` untuk semua warna; Sebagai hasilnya warna fragmen-fragmen pada kedua kanvas akan meredup karena asumsinya mereka hanya menerima 1/5 cahaya putih;
+
+![Hackathon #4](hackathon4.jpg)
