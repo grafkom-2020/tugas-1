@@ -9,3 +9,7 @@ Jangan lupa untuk mengganti nama pada judul halaman HTML yang tersedia dengan NR
 4. Implementasikan pencahayaan Ambient dengan nilai 0.2 untuk semua warna. Commit dengan pesan "Hackathon #4", lalu Push repositori Anda ke Github.
 5. Implementasikan pencahayaan Diffuse warna putih dengan asumsi sumber cahaya sangat jauh seperti cahaya matahari (directional ray bukan point light). Simulasikan cahaya (matahari) ini seolah mengitari obyek, terbit dari kanan kanvas, tenggelam di kiri kanvas, sehingga tampak seperti simulasi siang-malam. Commit dengan pesan "Hackathon #5", lalu Push repositori Anda ke Github.
 6. Buatlah animasi kamera untuk kanvas sebelah kanan, dimana kamera ini menyimulasikan first person view. Bila ditekan tombol depan (up arrow key), maka kamera akan berjalan maju. Bila ditekan tombol belakang (down arrow key) kamera akan berjalan mundur. Bila ditekan tombol kanan (right arrow key) kamera akan berputar ke kanan (menengok ke kanan). Bila ditekan tombol kiri (left arrow key) kamera akan berputar ke kiri (menengok ke kiri). Commit dengan pesan "Hackathon #6", lalu Push repositori Anda ke Github.
+
+## Hackathon #1
+
+![Hackathon #1](hackathon1.png)
