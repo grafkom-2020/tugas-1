@@ -1,24 +1,11 @@
-# Tugas 1
+# Hackathon
+
 Anda wajib menggunakan repositori ini sebagai titik mula pengerjaan tugas.
 Jangan lupa untuk mengganti nama pada judul halaman HTML yang tersedia dengan NRP Anda.
 
-## Detail Penugasan
-1. Gantilah foto obyek yang ada di halaman README ini dengan foto obyek yang telah Anda peroleh di tugas sebelumnya.
-2. Buatlah aplikasi WebGL layar penuh (_fullscreen_).
-3. Isi kanvas sebelah kiri dengan gambar 2-dimensi dari obyek yang telah Anda foto sebelumnya.
-4. Putar gambar tersebut searah jarum jam (_clock wise_) jika NRP Anda ganjil, putar gambar tersebut berlawanan arah jarum jam (_counter clock wise_) jika NRP Anda genap. Gunakan kecepatan putar `0.5°` _per frame_.
-5. Isi kanvas sebelah kanan dengan gambar 3-dimensi dari obyek yang telah Anda foto sebelumnya.
-6. Putar gambar tersebut terhadap sumbu X dengan kecepatan putar `0.25°` _per frame_, dan putar gambar tersebut terhadap sumbu Y dengan kecepatan putar `0.75°` _per frame_.
-7. Aplikasikan proyeksi perspektif pada kanvas sebelah kanan dengan `field of view = 60°`, `near clip distace = 1`, dan `far clip distance = 50`. Agar kubus tidak tampak terpotong (_clipped_), translasikan dia sebesar `1.5 unit` menjauhi kamera.
-8. Gantilah animasi (GIF) yang ada di halaman README ini dengan animasi (GIF) hasil akhir aplikasi WebGL Anda.
-
-## Foto Obyek
-![Foto obyek](foto.jpg)
-
-## Animasi (GIF) Aplikasi WebGL
-![Animasi aplikasi WebGL](animasi.gif)
-
-## Referensi
-- [Learning WebGL on Github](https://github.com/davidwparker/programmingtil-webgl)
-- [Learning WebGL on Youtube](https://www.youtube.com/watch?v=oDiSqQT_szo&list=PLPqKsyEGhUnaOdIFLKvdkXAQWD4DoXnFl)
-- [WebGL API](https://developer.mozilla.org/en-US/docs/Web/API/WebGL_API/WebGL_model_view_projection)
+1. Clone repositori Tugas-1 Anda masing-masing dari Github ke komputer. Repositori ini akan menjadi dasaran pengerjaan Tugas Hackathon ini. Silakan ganti judul halaman HTML dengan "Tugas Hackathon - NRP Anda". Commit dengan pesan "Hackathon #1", lalu Push repositori Anda ke Github.
+2. Hentikan animasi rotasi pada kedua kanvas. Commit dengan pesan "Hackathon #2", lalu Push repositori Anda ke Github.
+3. Tambahkan sebuah bidang datar bewarna #xyzxyz seluas 10x10 unit pada kedua kanvas, dengan xyz adalah tiga digit terakhir NRP Anda. Bidang ini diposisikan sedemikian rupa sehingga dia menjadi alas dari obyek utama yang Anda punya. Commit dengan pesan "Hackathon #3", lalu Push repositori Anda ke Github.
+4. Implementasikan pencahayaan Ambient dengan nilai 0.2 untuk semua warna. Commit dengan pesan "Hackathon #4", lalu Push repositori Anda ke Github.
+5. Implementasikan pencahayaan Diffuse warna putih dengan asumsi sumber cahaya sangat jauh seperti cahaya matahari (directional ray bukan point light). Simulasikan cahaya (matahari) ini seolah mengitari obyek, terbit dari kanan kanvas, tenggelam di kiri kanvas, sehingga tampak seperti simulasi siang-malam. Commit dengan pesan "Hackathon #5", lalu Push repositori Anda ke Github.
+6. Buatlah animasi kamera untuk kanvas sebelah kanan, dimana kamera ini menyimulasikan first person view. Bila ditekan tombol depan (up arrow key), maka kamera akan berjalan maju. Bila ditekan tombol belakang (down arrow key) kamera akan berjalan mundur. Bila ditekan tombol kanan (right arrow key) kamera akan berputar ke kanan (menengok ke kanan). Bila ditekan tombol kiri (left arrow key) kamera akan berputar ke kiri (menengok ke kiri). Commit dengan pesan "Hackathon #6", lalu Push repositori Anda ke Github.
