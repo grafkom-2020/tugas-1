@@ -13,3 +13,7 @@ Jangan lupa untuk mengganti nama pada judul halaman HTML yang tersedia dengan NR
 ## Hackathon #1
 
 ![Hackathon #1](hackathon1.jpg)
+
+## Hackathon #2
+
+![Hackathon #2](hackathon2.jpg)
