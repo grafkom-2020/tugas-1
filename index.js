@@ -69,6 +69,7 @@ function main() {
 
   // Kumpulkan semua verteks untuk frame sebelah kiri
   var leftVertices = rectangleVertices.concat(baseVertices);
+  var rightVertices = cubeVertices.concat(baseVertices);
 
   // Inisiasi VBO (Vertex Buffer Object)
   var leftVertexBuffer = leftGL.createBuffer();
@@ -77,7 +78,7 @@ function main() {
   leftGL.bindBuffer(leftGL.ARRAY_BUFFER, null);
   var rightVertexBuffer = rightGL.createBuffer();
   rightGL.bindBuffer(rightGL.ARRAY_BUFFER, rightVertexBuffer);
-  rightGL.bufferData(rightGL.ARRAY_BUFFER, new Float32Array(cubeVertices), rightGL.STATIC_DRAW);
+  rightGL.bufferData(rightGL.ARRAY_BUFFER, new Float32Array(rightVertices), rightGL.STATIC_DRAW);
   rightGL.bindBuffer(rightGL.ARRAY_BUFFER, null);
 
   // Definisi Shaders
@@ -108,7 +109,7 @@ var leftFragmentShaderCode = `
         1, 0, 0, 0,
         0, 1, 0, 0,
         0, 0, 1, 0,
-        0, 0, -1.5, 1
+        0, 0, -5.5, 1
       );
 
       mat4 model = translate;
@@ -192,10 +193,11 @@ var leftFragmentShaderCode = `
     leftGL.clear(leftGL.COLOR_BUFFER_BIT);
     leftGL.drawArrays(leftGL.TRIANGLES, 0, 12);
     rightGL.clear(rightGL.COLOR_BUFFER_BIT | rightGL.DEPTH_BUFFER_BIT);
-    rightGL.drawArrays(rightGL.TRIANGLES, 0, 36);
+    rightGL.drawArrays(rightGL.TRIANGLES, 0, 42);
     requestAnimationFrame(render);
   }
   leftGL.clearColor(0.7, 0.7, 0.7, 1.0);
+  leftGL.enable(leftGL.DEPTH_TEST);
   leftGL.viewport(0, (leftGL.canvas.height - leftGL.canvas.width)/2, leftGL.canvas.width, leftGL.canvas.width);
   rightGL.clearColor(0.0, 0.0, 0.0, 1.0);
   rightGL.enable(rightGL.DEPTH_TEST);
