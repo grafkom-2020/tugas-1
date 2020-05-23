@@ -13,14 +13,17 @@ Jangan lupa untuk mengganti nama pada judul halaman HTML yang tersedia dengan NR
 ## Hackathon #1
 
 Mengganti judul halaman HTML menjadi "Tugas Hackathon - 5104100118";
+
 ![Hackathon #1](hackathon1.jpg)
 
 ## Hackathon #2
 
 Menghentikan animasi rotasi pada kedua kanvas dengan memodifikasi definisi attribute, uniform, dan baris code pada shader terkait;
+
 ![Hackathon #2](hackathon2.jpg)
 
 ## Hackathon #3
 
 Menambah sebuah bidang datar (alas obyek) bewarna #118118, yakni r: 17, g: 129, b: 24 pada skala 0-255, atau r: 0.06666666667 g:0.5058823529 b:0.09411764706 pada skala 0-1); Warna kotak pada frame sebelah kiri yang awalnya abu-abu sekalian saya ubah jadi merah supaya identik dengan warna kotak pada frame sebelah kanan; Baik frame sebelah kiri maupun kanan telah saya atur agar sama-sama memiliki bidang datar (alas obyek), hanya saja tidak terlihat pada frame sebelah kiri, karena tidak ada perspektif. Kamera pada frame sebelah kanan saya letakkan di posisi -5.5;
+
 ![Hackathon #3](hackathon3.jpg)
