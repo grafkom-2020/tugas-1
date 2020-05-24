@@ -7,13 +7,14 @@ function main() {
   var rightGL = rightCanvas.getContext("webgl");
 
   // Inisiasi verteks persegi
+  // vec3 position, vec3 color, vec3 normal
   var rectangleVertices = [
-    -0.5,  0.5, 0.0, 1.0, 0.0, 0.0,
-    -0.5, -0.5, 0.0, 1.0, 0.0, 0.0,
-    0.5, -0.5, 0.0, 1.0, 0.0, 0.0,
-    0.5, -0.5, 0.0, 1.0, 0.0, 0.0,
-    0.5,  0.5, 0.0, 1.0, 0.0, 0.0, 
-    -0.5,  0.5, 0.0, 1.0, 0.0, 0.0
+    -0.5,  0.5, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, -1.0,
+    -0.5, -0.5, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, -1.0,
+    0.5, -0.5, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, -1.0,
+    0.5, -0.5, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, -1.0,
+    0.5,  0.5, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, -1.0,
+    -0.5,  0.5, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, -1.0
   ];
 
   // Inisiasi verteks kubus
@@ -29,47 +30,55 @@ function main() {
     [ 0.5,  0.5, -0.5]    // H, 7 
   ];
   var cubeColors = [
-      [],
-      [1.0, 0.0, 0.0],    // merah
-      [0.0, 1.0, 0.0],    // hijau
-      [0.0, 0.0, 1.0],    // biru
-      [1.0, 1.0, 1.0],    // putih
-      [1.0, 0.5, 0.0],    // oranye
-      [1.0, 1.0, 0.0],    // kuning
-      []
+    [],
+    [1.0, 0.0, 0.0],    // merah
+    [0.0, 1.0, 0.0],    // hijau
+    [0.0, 0.0, 1.0],    // biru
+    [1.0, 1.0, 1.0],    // putih
+    [1.0, 0.5, 0.0],    // oranye
+    [1.0, 1.0, 0.0],    // kuning
+    []
   ];
-  function quad(a, b, c, d) {
-      var indices = [a, b, c, c, d, a];
-      for (var i=0; i<indices.length; i++) {
-          for (var j=0; j<3; j++) {
-              cubeVertices.push(cubePoints[indices[i]][j]);
-          }
-          for (var j=0; j<3; j++) {
-              cubeVertices.push(cubeColors[a][j]);
-          }
+  function quad(a, b, c, d, v) {
+    var indices = [a, b, c, c, d, a];
+    for (var i=0; i<indices.length; i++) {
+      for (var j=0; j<3; j++) {
+        cubeVertices.push(cubePoints[indices[i]][j]);
       }
+      for (var j=0; j<3; j++) {
+        cubeVertices.push(cubeColors[a][j]);
+      }
+      // vektor normal
+      for (var j=0; j<3; j++) {
+        cubeVertices.push(v[j]);
+      }
+    }
   }
-  quad(1, 2, 3, 0); // Kubus depan
-  quad(2, 6, 7, 3); // Kubus kanan
-  quad(3, 7, 4, 0); // Kubus atas
-  quad(4, 5, 1, 0); // Kubus kiri
-  quad(5, 4, 7, 6); // Kubus belakang
-  quad(6, 2, 1, 5); // Kubus bawah
+  quad(1, 2, 3, 0, [ 0.0,  0.0, -1.0]); // Kubus depan
+  quad(2, 6, 7, 3, [ 1.0,  0.0,  0.0]); // Kubus kanan
+  quad(3, 7, 4, 0, [ 0.0,  1.0,  0.0]); // Kubus atas
+  quad(4, 5, 1, 0, [-1.0,  0.0,  0.0]); // Kubus kiri
+  quad(5, 4, 7, 6, [ 0.0,  0.0,  1.0]); // Kubus belakang
+  quad(6, 2, 1, 5, [ 0.0, -1.0,  0.0]); // Kubus bawah
 
   // Inisiasi verteks bidang datar (alas obyek)
+  // vec3 position, vec3 color, vec3 normal
   var baseVertices = [
-    -5.0, -0.5, -5.0, 0.06666666667, 0.5058823529, 0.09411764706,
-    5.0, -0.5, -5.0, 0.06666666667, 0.5058823529, 0.09411764706,
-    -5.0, -0.5, 5.0, 0.06666666667, 0.5058823529, 0.09411764706,
-    -5.0, -0.5, 5.0, 0.06666666667, 0.5058823529, 0.09411764706,
-    5.0, -0.5, 5.0, 0.06666666667, 0.5058823529, 0.09411764706,
-    5.0, -0.5, -5.0, 0.06666666667, 0.5058823529, 0.09411764706
+    -5.0, -0.5, -5.0, 0.06666666667, 0.5058823529, 0.09411764706, 0.0, 1.0, 0.0,
+    5.0, -0.5, -5.0, 0.06666666667, 0.5058823529, 0.09411764706, 0.0, 1.0, 0.0,
+    -5.0, -0.5, 5.0, 0.06666666667, 0.5058823529, 0.09411764706, 0.0, 1.0, 0.0,
+    -5.0, -0.5, 5.0, 0.06666666667, 0.5058823529, 0.09411764706, 0.0, 1.0, 0.0,
+    5.0, -0.5, 5.0, 0.06666666667, 0.5058823529, 0.09411764706, 0.0, 1.0, 0.0,
+    5.0, -0.5, -5.0, 0.06666666667, 0.5058823529, 0.09411764706, 0.0, 1.0, 0.0
   ];
   // Warna di atas ( 0.06666666667, 0.5058823529, 0.09411764706 ) sama dengan #118118
 
   // Kumpulkan semua verteks untuk frame sebelah kiri
   var leftVertices = rectangleVertices.concat(baseVertices);
   var rightVertices = cubeVertices.concat(baseVertices);
+
+  console.log("leftVertices: " + leftVertices.length);
+  console.log("rightVertices: " + rightVertices.length);
 
   // Inisiasi VBO (Vertex Buffer Object)
   var leftVertexBuffer = leftGL.createBuffer();
@@ -85,26 +94,71 @@ function main() {
   var leftVertexShaderCode = `
   attribute vec3 aPosition;
   attribute vec3 aColor;
+  attribute vec3 aNormal;
   varying vec3 vColor;
+  varying vec3 vNormal;
   void main(void) {
     vColor = aColor;
+    mat3 normal = mat3(1.0);  // Matriks identitas 3x3
+    vNormal = normalize(normal * aNormal);
     gl_Position = vec4(aPosition, 1.0);
   }
 `
 var leftFragmentShaderCode = `
   precision mediump float;
   varying vec3 vColor;
+  varying vec3 vNormal;
+  uniform float diffuseAngle;
   void main() {
     vec3 ambientValue = vec3(0.2, 0.2, 0.2);
     vec3 ambient = ambientValue * vColor;
-    gl_FragColor = vec4(ambient, 1.0);
+    vec3 diffuseColor = vec3(1.0, 1.0, 1.0);
+    float a = radians(diffuseAngle);
+    mat4 rotation = mat4(
+      cos(a), sin(a), 0, 0,
+      -sin(a), cos(a), 0, 0,
+      0, 0, 1, 0,
+      0, 0, 0, 1
+    );
+    vec4 diffuseDirection = rotation * vec4(1.0, 1.0, 0.0, 0.0);
+    float normalDotLight = max(dot(vNormal, diffuseDirection.xyz), 0.0);
+    vec3 diffuse = diffuseColor * vColor * normalDotLight;
+    gl_FragColor = vec4(ambient + diffuse, 1.0);
   }
 `
   var rightVertexShaderCode = `
     attribute vec3 aPosition;
     attribute vec3 aColor;
+    attribute vec3 aNormal;
     varying vec3 vColor;
+    varying vec3 vNormal;
     uniform float aspectRatio;
+    mat3 transpose(mat3 inMatrix) {
+      vec3 i0 = inMatrix[0];
+      vec3 i1 = inMatrix[1];
+      vec3 i2 = inMatrix[2];
+      mat3 outMatrix = mat3(
+        vec3(i0.x, i1.x, i2.x),
+        vec3(i0.y, i1.y, i2.y),
+        vec3(i0.z, i1.z, i2.z)
+      );
+      return outMatrix;
+    }
+    int modI(int x, int y) {
+      return int(float(x) - float(y) * floor(float(x) / float(y)));
+    }
+    mat3 inverse(mat3 inMatrix) {
+      float determinant = 0.0;
+      for (int i = 0; i < 3; i++)
+        determinant = determinant + (inMatrix[0][i] * (inMatrix[1][modI((i+1),3)] * inMatrix[2][modI((i+2),3)] - inMatrix[1][modI((i+2),3)] * inMatrix[2][modI((i+1),3)]));
+      mat3 outMatrix = mat3(1.0);
+      for (int i = 0; i < 3; i++) {
+        for (int j = 0; j < 3; j++) {
+          outMatrix[i][j] = ((inMatrix[modI((j+1),3)][modI((i+1),3)] * inMatrix[modI((j+2),3)][modI((i+2),3)]) - (inMatrix[modI((j+1),3)][modI((i+2),3)] * inMatrix[modI((j+2),3)][modI((i+1),3)])) / determinant;
+        }
+      }
+      return outMatrix;
+    }
     void main(void) {
       vColor = aColor;
       mat4 translate = mat4(
@@ -121,6 +175,9 @@ var leftFragmentShaderCode = `
         0, 0, 1, 0,
         0, 0, 0, 1
       );
+      mat4 modelView = view * model;
+      mat3 normal = transpose(inverse(mat3(modelView)));
+      vNormal = normalize(normal * aNormal);
       
       // Proyeksi perspektif
       float fov = radians(60.0);
@@ -135,68 +192,95 @@ var leftFragmentShaderCode = `
         0, 0, -1, 0
       );
 
-      gl_Position = projection * view * model * vec4(aPosition, 1.0);
+      gl_Position = projection * modelView * vec4(aPosition, 1.0);
     }
   `
   var rightFragmentShaderCode = `
     precision mediump float;
     varying vec3 vColor;
+    varying vec3 vNormal;
+    uniform float diffuseAngle;
     void main() {
       vec3 ambientValue = vec3(0.2, 0.2, 0.2);
       vec3 ambient = ambientValue * vColor;
-      gl_FragColor = vec4(ambient, 1.0);
+      vec3 diffuseColor = vec3(1.0, 1.0, 1.0);
+      float a = radians(diffuseAngle);
+      mat4 rotation = mat4(
+        cos(a), sin(a), 0, 0,
+        -sin(a), cos(a), 0, 0,
+        0, 0, 1, 0,
+        0, 0, 0, 1
+      );
+      vec4 diffuseDirection = rotation * vec4(1.0, 1.0, 0.0, 0.0);
+      float normalDotLight = max(dot(vNormal, diffuseDirection.xyz), 0.0);
+      vec3 diffuse = diffuseColor * vColor * normalDotLight;
+      gl_FragColor = vec4(ambient + diffuse, 1.0);
     }
   `
 
   // Proses kompilasi, penautan (linking), dan eksekusi Shaders
-  var vertexShader = leftGL.createShader(leftGL.VERTEX_SHADER);
-  leftGL.shaderSource(vertexShader, leftVertexShaderCode);
-  leftGL.compileShader(vertexShader);
-  var fragmentShader = leftGL.createShader(leftGL.FRAGMENT_SHADER);
-  leftGL.shaderSource(fragmentShader, leftFragmentShaderCode);
-  leftGL.compileShader(fragmentShader);
+  var leftVertexShader = leftGL.createShader(leftGL.VERTEX_SHADER);
+  leftGL.shaderSource(leftVertexShader, leftVertexShaderCode);
+  leftGL.compileShader(leftVertexShader);
+  var leftFragmentShader = leftGL.createShader(leftGL.FRAGMENT_SHADER);
+  leftGL.shaderSource(leftFragmentShader, leftFragmentShaderCode);
+  leftGL.compileShader(leftFragmentShader);
   var leftProgram = leftGL.createProgram();
-  leftGL.attachShader(leftProgram, vertexShader);
-  leftGL.attachShader(leftProgram, fragmentShader);
+  leftGL.attachShader(leftProgram, leftVertexShader);
+  leftGL.attachShader(leftProgram, leftFragmentShader);
   leftGL.linkProgram(leftProgram);
   leftGL.useProgram(leftProgram);
-  var vertexShader = rightGL.createShader(rightGL.VERTEX_SHADER);
-  rightGL.shaderSource(vertexShader, rightVertexShaderCode);
-  rightGL.compileShader(vertexShader);
-  var fragmentShader = rightGL.createShader(rightGL.FRAGMENT_SHADER);
-  rightGL.shaderSource(fragmentShader, rightFragmentShaderCode);
-  rightGL.compileShader(fragmentShader);
+  var rightVertexShader = rightGL.createShader(rightGL.VERTEX_SHADER);
+  rightGL.shaderSource(rightVertexShader, rightVertexShaderCode);
+  rightGL.compileShader(rightVertexShader);
+  var rightFragmentShader = rightGL.createShader(rightGL.FRAGMENT_SHADER);
+  rightGL.shaderSource(rightFragmentShader, rightFragmentShaderCode);
+  rightGL.compileShader(rightFragmentShader);
   var rightProgram = rightGL.createProgram();
-  rightGL.attachShader(rightProgram, vertexShader);
-  rightGL.attachShader(rightProgram, fragmentShader);
+  rightGL.attachShader(rightProgram, rightVertexShader);
+  rightGL.attachShader(rightProgram, rightFragmentShader);
   rightGL.linkProgram(rightProgram);
   rightGL.useProgram(rightProgram);
 
   // Pengikatan VBO dan pengarahan pointer atribut posisi dan warna
   leftGL.bindBuffer(leftGL.ARRAY_BUFFER, leftVertexBuffer);
   var leftPosition = leftGL.getAttribLocation(leftProgram, "aPosition");
-  leftGL.vertexAttribPointer(leftPosition, 3, leftGL.FLOAT, false, 6 * Float32Array.BYTES_PER_ELEMENT, 0);
+  leftGL.vertexAttribPointer(leftPosition, 3, leftGL.FLOAT, false, 9 * Float32Array.BYTES_PER_ELEMENT, 0);
   leftGL.enableVertexAttribArray(leftPosition);
   var leftColor = leftGL.getAttribLocation(leftProgram, 'aColor');
-  leftGL.vertexAttribPointer(leftColor, 3, leftGL.FLOAT, false, 6 * Float32Array.BYTES_PER_ELEMENT, 3 * Float32Array.BYTES_PER_ELEMENT);
+  leftGL.vertexAttribPointer(leftColor, 3, leftGL.FLOAT, false, 9 * Float32Array.BYTES_PER_ELEMENT, 3 * Float32Array.BYTES_PER_ELEMENT);
   leftGL.enableVertexAttribArray(leftColor);
+  var leftNormal = leftGL.getAttribLocation(leftProgram, 'aNormal');
+  leftGL.vertexAttribPointer(leftNormal, 3, leftGL.FLOAT, false, 9 * Float32Array.BYTES_PER_ELEMENT, 6 * Float32Array.BYTES_PER_ELEMENT);
+  leftGL.enableVertexAttribArray(leftNormal);
   rightGL.bindBuffer(rightGL.ARRAY_BUFFER, rightVertexBuffer);
   var rightPosition = rightGL.getAttribLocation(rightProgram, "aPosition");
-  rightGL.vertexAttribPointer(rightPosition, 3, rightGL.FLOAT, false, 6 * Float32Array.BYTES_PER_ELEMENT, 0);
+  rightGL.vertexAttribPointer(rightPosition, 3, rightGL.FLOAT, false, 9 * Float32Array.BYTES_PER_ELEMENT, 0);
   rightGL.enableVertexAttribArray(rightPosition);
   var rightColor = rightGL.getAttribLocation(rightProgram, "aColor");
-  rightGL.vertexAttribPointer(rightColor, 3, rightGL.FLOAT, false, 6 * Float32Array.BYTES_PER_ELEMENT, 3 * Float32Array.BYTES_PER_ELEMENT);
+  rightGL.vertexAttribPointer(rightColor, 3, rightGL.FLOAT, false, 9 * Float32Array.BYTES_PER_ELEMENT, 3 * Float32Array.BYTES_PER_ELEMENT);
   rightGL.enableVertexAttribArray(rightColor);
+  var rightNormal = rightGL.getAttribLocation(rightProgram, "aNormal");
+  rightGL.vertexAttribPointer(rightNormal, 3, rightGL.FLOAT, false, 9 * Float32Array.BYTES_PER_ELEMENT, 6 * Float32Array.BYTES_PER_ELEMENT);
+  rightGL.enableVertexAttribArray(rightNormal);
 
   // Parameter proyeksi
   var aspectRatioLoc = rightGL.getUniformLocation(rightProgram, 'aspectRatio');
   rightGL.uniform1f(aspectRatioLoc, leftGL.canvas.width/leftGL.canvas.height);
 
+  // Parameter animasi pencahayaan
+  var diffuseAngle = 0.0; // dalam derajat
+  var leftLocDiffuseAngle = leftGL.getUniformLocation(leftProgram, 'diffuseAngle');
+  var rightLocDiffuseAngle = rightGL.getUniformLocation(rightProgram, 'diffuseAngle');
+
   // Persiapan tampilan layar dan mulai menggambar secara berulang (animasi)
   function render() {
-    leftGL.clear(leftGL.COLOR_BUFFER_BIT);
+    diffuseAngle += 1.0;
+    leftGL.clear(leftGL.COLOR_BUFFER_BIT | leftGL.DEPTH_BUFFER_BIT);
+    leftGL.uniform1f(leftLocDiffuseAngle, diffuseAngle);
     leftGL.drawArrays(leftGL.TRIANGLES, 0, 12);
     rightGL.clear(rightGL.COLOR_BUFFER_BIT | rightGL.DEPTH_BUFFER_BIT);
+    rightGL.uniform1f(rightLocDiffuseAngle, diffuseAngle);
     rightGL.drawArrays(rightGL.TRIANGLES, 0, 42);
     requestAnimationFrame(render);
   }
