@@ -33,3 +33,9 @@ Menambah sebuah bidang datar (alas obyek) bewarna `#118118`, yakni r: `17`, g: `
 Mengimplementasikan pencahayaan ambient dengan nilai (intensitas) sebesar `0.2` untuk semua warna; Sebagai hasilnya warna fragmen-fragmen pada kedua kanvas akan meredup karena asumsinya mereka hanya menerima 1/5 cahaya putih;
 
 ![Hackathon #4](hackathon4.jpg)
+
+## Hackathon #5
+
+Mengimplementasikan pencahayaan diffuse direksional bewarna putih dari kanan kanvas ke kiri kanvas; Pustaka glMatrix digunakan untuk memudahkan proses perhitungan matriks normal, model, dan view; Posisi kamera untuk sisi kanan sengaja diubah agar bisa memperlihatkan efek pencahayaan secara jelas; Pencahayaan sebenarnya juga sudah diimplementasikan di kanvas kanan, hanya saja fragmen (sisi depan) yang bersangkutan tidak terkena efek pencahayaan karena vektor normalnya ortogonal terhadap arah datang cahaya.
+
+![Hackathon #5](hackathon5.gif)
