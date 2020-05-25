@@ -9,12 +9,12 @@ function main() {
   // Inisiasi verteks persegi
   // vec3 position, vec3 color, vec3 normal
   var rectangleVertices = [
-    -0.5,  0.5, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0,
-    -0.5, -0.5, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0,
-    0.5, -0.5, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0,
-    0.5, -0.5, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0,
-    0.5,  0.5, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0,
-    -0.5,  0.5, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0
+    -0.5,  0.5, 0.0, 1.0, 1.0, 1.0, 0.0, 0.0, 1.0,
+    -0.5, -0.5, 0.0, 1.0, 1.0, 1.0, 0.0, 0.0, 1.0,
+    0.5, -0.5, 0.0, 1.0, 1.0, 1.0, 0.0, 0.0, 1.0,
+    0.5, -0.5, 0.0, 1.0, 1.0, 1.0, 0.0, 0.0, 1.0,
+    0.5,  0.5, 0.0, 1.0, 1.0, 1.0, 0.0, 0.0, 1.0,
+    -0.5,  0.5, 0.0, 1.0, 1.0, 1.0, 0.0, 0.0, 1.0
   ];
 
   // Inisiasi verteks kubus
@@ -31,12 +31,12 @@ function main() {
   ];
   var cubeColors = [
       [],
-      [1.0, 0.0, 0.0],    // merah
+      [1.0, 1.0, 1.0],    // putih
+      [1.0, 1.0, 0.0],    // kuning
       [0.0, 1.0, 0.0],    // hijau
       [0.0, 0.0, 1.0],    // biru
-      [1.0, 1.0, 1.0],    // putih
+      [1.0, 0.0, 0.0],    // merah
       [1.0, 0.5, 0.0],    // oranye
-      [1.0, 1.0, 0.0],    // kuning
       []
   ];
   function quad(a, b, c, d, v) {
@@ -234,14 +234,9 @@ var leftFragmentShaderCode = `
   var rightLocModelView = rightGL.getUniformLocation(rightProgram, 'modelView');
   var model = glMatrix.mat4.create();
   var view = glMatrix.mat4.create();
-  glMatrix.mat4.lookAt(view,
-    [3.0, 3.0, 5.5], // posisi kamera
-    [0.0, 0.0, 0.0], // titik ke mana kamera melihat
-    [0.0, 1.0, 0.0]  // vektor arah atas kamera
-  );
-  var modelView = glMatrix.mat4.create();
-  glMatrix.mat4.multiply(modelView, view, model);
-  rightGL.uniformMatrix4fv(rightLocModelView, false, modelView);
+  var camera = [0.0, 1.0, 4.5];
+  var focal = [0.0, 1.0, -5.0];
+  var cameraAngle = 0.0;  // dalam derajat
 
   // Definisi untuk matriks model vektor normal
   var rightLocNormal = rightGL.getUniformLocation(rightProgram, 'normal');
@@ -249,8 +244,62 @@ var leftFragmentShaderCode = `
   glMatrix.mat3.normalFromMat4(normal, model);
   rightGL.uniformMatrix3fv(rightLocNormal, false, normal);
 
+  // Interaksi
+  var walkingSpeed = 0.5;
+  function onKeyDown(event) {
+    if (event.keyCode == 40) {
+      var nextZ = walkingSpeed * Math.cos(glMatrix.glMatrix.toRadian(cameraAngle));
+      var nextX = walkingSpeed * Math.sin(glMatrix.glMatrix.toRadian(cameraAngle));
+      if (camera[0] + nextX >= 5.0 || 
+        camera[0] + nextX <= -5.0 || 
+        camera[2] + nextZ >= 5.0 || 
+        camera[2] + nextZ <= -5.0) {
+        console.log("WALL");
+      } else {
+        camera[2] += nextZ;
+        camera[0] += nextX;
+      }
+    }
+    else if (event.keyCode == 38) {
+      var nextZ = walkingSpeed * Math.cos(glMatrix.glMatrix.toRadian(cameraAngle));
+      var nextX = walkingSpeed * Math.sin(glMatrix.glMatrix.toRadian(cameraAngle));
+      if (camera[0] - nextX >= 5.0 || 
+        camera[0] - nextX <= -5.0 || 
+        camera[2] - nextZ >= 5.0 || 
+        camera[2] - nextZ <= -5.0) {
+        console.log("WALL");
+      } else {
+        camera[2] -= nextZ;
+        camera[0] -= nextX;
+      }
+    }
+    else if (event.keyCode == 37) {
+      cameraAngle += 10.0;
+      glMatrix.vec3.rotateY(focal, [0.0, 1.0, 0.0], camera, glMatrix.glMatrix.toRadian(cameraAngle));
+    }
+    else if (event.keyCode == 39) {
+      cameraAngle -= 10.0;
+      glMatrix.vec3.rotateY(focal, [0.0, 1.0, 0.0], camera, glMatrix.glMatrix.toRadian(cameraAngle));
+    }
+    else if (event.keyCode == 32) {
+      camera = [0.0, 1.0, 4.5];
+      focal = [0.0, 1.0, 0.0];
+      cameraAngle = 0.0;
+    }
+    console.log("camera: " + camera + " | " + "cameraAngle: " + cameraAngle + " | " + "focal:" + focal);
+  }
+  document.addEventListener('keydown', onKeyDown);
+
   // Persiapan tampilan layar dan mulai menggambar secara berulang (animasi)
   function render() {
+    glMatrix.mat4.lookAt(view,
+      camera, // posisi kamera
+      focal, // titik ke mana kamera melihat
+      [0.0, 1.0, 0.0]  // vektor arah atas kamera
+    );
+    var modelView = glMatrix.mat4.create();
+    glMatrix.mat4.multiply(modelView, view, model);
+    rightGL.uniformMatrix4fv(rightLocModelView, false, modelView);
     diffuseAngle += 1.0;
     leftGL.clear(leftGL.COLOR_BUFFER_BIT | leftGL.DEPTH_BUFFER_BIT);
     leftGL.uniform1f(leftLocDiffuseAngle, diffuseAngle);
