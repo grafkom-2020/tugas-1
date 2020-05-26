@@ -247,46 +247,49 @@ var leftFragmentShaderCode = `
   // Interaksi
   var walkingSpeed = 0.5;
   function onKeyDown(event) {
-    if (event.keyCode == 40) {
-      var nextZ = walkingSpeed * Math.cos(glMatrix.glMatrix.toRadian(cameraAngle));
-      var nextX = walkingSpeed * Math.sin(glMatrix.glMatrix.toRadian(cameraAngle));
+    if (event.keyCode == 38) {  // Panah atas
+      var nextX = walkingSpeed * Math.sin(glMatrix.glMatrix.toRadian(-cameraAngle));
+      var nextZ = walkingSpeed * Math.cos(glMatrix.glMatrix.toRadian(-cameraAngle));
       if (camera[0] + nextX >= 5.0 || 
         camera[0] + nextX <= -5.0 || 
-        camera[2] + nextZ >= 5.0 || 
-        camera[2] + nextZ <= -5.0) {
-        console.log("WALL");
-      } else {
-        camera[2] += nextZ;
-        camera[0] += nextX;
-      }
-    }
-    else if (event.keyCode == 38) {
-      var nextZ = walkingSpeed * Math.cos(glMatrix.glMatrix.toRadian(cameraAngle));
-      var nextX = walkingSpeed * Math.sin(glMatrix.glMatrix.toRadian(cameraAngle));
-      if (camera[0] - nextX >= 5.0 || 
-        camera[0] - nextX <= -5.0 || 
         camera[2] - nextZ >= 5.0 || 
         camera[2] - nextZ <= -5.0) {
         console.log("WALL");
       } else {
+        camera[0] += nextX;
         camera[2] -= nextZ;
-        camera[0] -= nextX;
       }
     }
-    else if (event.keyCode == 37) {
+    else if (event.keyCode == 40) { // Panah bawah
+      var nextX = walkingSpeed * Math.sin(glMatrix.glMatrix.toRadian(-cameraAngle));
+      var nextZ = walkingSpeed * Math.cos(glMatrix.glMatrix.toRadian(-cameraAngle));
+      if (camera[0] - nextX >= 5.0 || 
+        camera[0] - nextX <= -5.0 || 
+        camera[2] + nextZ >= 5.0 || 
+        camera[2] + nextZ <= -5.0) {
+        console.log("WALL");
+      } else {
+        camera[0] -= nextX;
+        camera[2] += nextZ;
+      }
+    }
+    else if (event.keyCode == 37) { // Panah kiri
       cameraAngle += 10.0;
       glMatrix.vec3.rotateY(focal, [0.0, 1.0, 0.0], camera, glMatrix.glMatrix.toRadian(cameraAngle));
     }
-    else if (event.keyCode == 39) {
+    else if (event.keyCode == 39) { // Panah kanan
       cameraAngle -= 10.0;
       glMatrix.vec3.rotateY(focal, [0.0, 1.0, 0.0], camera, glMatrix.glMatrix.toRadian(cameraAngle));
     }
-    else if (event.keyCode == 32) {
+    else if (event.keyCode == 32) { // Spasi
       camera = [0.0, 1.0, 4.5];
-      focal = [0.0, 1.0, 0.0];
+      focal = [0.0, 1.0, -5.0];
       cameraAngle = 0.0;
     }
-    console.log("camera: " + camera + " | " + "cameraAngle: " + cameraAngle + " | " + "focal:" + focal);
+    console.log("camera: " + camera + " | " + "cameraAngle: " + cameraAngle + " | " + 
+      "sin: " + Math.sin(glMatrix.glMatrix.toRadian(cameraAngle)) + " | " + 
+      "cos: " + Math.cos(glMatrix.glMatrix.toRadian(cameraAngle)) + " | " + 
+      "focal:" + focal);
   }
   document.addEventListener('keydown', onKeyDown);
 
