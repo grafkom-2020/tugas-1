@@ -67,16 +67,8 @@ function main() {
   // Definisi Shaders
   var leftVertexShaderCode = `
   attribute vec2 aPosition;
-  uniform float angle;
   void main(void) {
-    float a = radians(angle);
-    mat4 rotation = mat4(
-      cos(a), sin(a), 0, 0,
-      -sin(a), cos(a), 0, 0,
-      0, 0, 1, 0,
-      0, 0, 0, 1
-    );
-    gl_Position = rotation * vec4(aPosition, 0.0, 1.0);
+    gl_Position = vec4(aPosition, 0.0, 1.0);
   }
 `
 var leftFragmentShaderCode = `
@@ -89,25 +81,9 @@ var leftFragmentShaderCode = `
     attribute vec3 aPosition;
     attribute vec3 aColor;
     varying vec3 vColor;
-    uniform float angleX;
-    uniform float angleY;
     uniform float aspectRatio;
     void main(void) {
       vColor = aColor;
-      float ax = radians(angleX);
-      float ay = radians(angleY);
-      mat4 rx = mat4(
-        1, 0, 0, 0,
-        0, cos(ax), sin(ax), 0,
-        0, -sin(ax), cos(ax), 0,
-        0, 0, 0, 1
-      );
-      mat4 ry = mat4(
-        cos(ay), 0, -sin(ay), 0,
-        0, 1, 0, 0,
-        sin(ay), 0, cos(ay), 0,
-        0, 0, 0, 1
-      );
       mat4 translate = mat4(
         1, 0, 0, 0,
         0, 1, 0, 0,
@@ -115,7 +91,7 @@ var leftFragmentShaderCode = `
         0, 0, -1.5, 1
       );
 
-      mat4 model = translate * ry * rx;
+      mat4 model = translate;
       mat4 view = mat4(
         1, 0, 0, 0,
         0, 1, 0, 0,
@@ -184,26 +160,14 @@ var leftFragmentShaderCode = `
   rightGL.vertexAttribPointer(color, 3, rightGL.FLOAT, false, 6 * Float32Array.BYTES_PER_ELEMENT, 3 * Float32Array.BYTES_PER_ELEMENT);
   rightGL.enableVertexAttribArray(color);
 
-  // Parameter animasi
-  var leftAngle = 0.0;
-  var leftAngleLoc = leftGL.getUniformLocation(leftProgram, 'angle');
-  var rightAngleX = 0.0;
-  var rightAngleXLoc = rightGL.getUniformLocation(rightProgram, 'angleX');
-  var rightAngleY = 0.0;
-  var rightAngleYLoc = rightGL.getUniformLocation(rightProgram, 'angleY');
+  // Parameter proyeksi
   var aspectRatioLoc = rightGL.getUniformLocation(rightProgram, 'aspectRatio');
   rightGL.uniform1f(aspectRatioLoc, leftGL.canvas.width/leftGL.canvas.height);
 
   // Persiapan tampilan layar dan mulai menggambar secara berulang (animasi)
   function render() {
-    leftAngle -= 0.5;
-    leftGL.uniform1f(leftAngleLoc, leftAngle);
     leftGL.clear(leftGL.COLOR_BUFFER_BIT);
     leftGL.drawArrays(leftGL.TRIANGLE_FAN, 0, 4);
-    rightAngleX += 0.25;
-    rightGL.uniform1f(rightAngleXLoc, rightAngleX);
-    rightAngleY += 0.75;
-    rightGL.uniform1f(rightAngleYLoc, rightAngleY);
     rightGL.clear(rightGL.COLOR_BUFFER_BIT | rightGL.DEPTH_BUFFER_BIT);
     rightGL.drawArrays(rightGL.TRIANGLES, 0, 36);
     requestAnimationFrame(render);
