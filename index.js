@@ -275,21 +275,20 @@ var leftFragmentShaderCode = `
     }
     else if (event.keyCode == 37) { // Panah kiri
       cameraAngle += 10.0;
-      glMatrix.vec3.rotateY(focal, [0.0, 1.0, 0.0], camera, glMatrix.glMatrix.toRadian(cameraAngle));
+      glMatrix.vec3.rotateY(focal, [camera[0], 1.0, -5.0], camera, glMatrix.glMatrix.toRadian(cameraAngle));
     }
     else if (event.keyCode == 39) { // Panah kanan
       cameraAngle -= 10.0;
-      glMatrix.vec3.rotateY(focal, [0.0, 1.0, 0.0], camera, glMatrix.glMatrix.toRadian(cameraAngle));
+      glMatrix.vec3.rotateY(focal, [camera[0], 1.0, -5.0], camera, glMatrix.glMatrix.toRadian(cameraAngle));
     }
     else if (event.keyCode == 32) { // Spasi
       camera = [0.0, 1.0, 4.5];
       focal = [0.0, 1.0, -5.0];
       cameraAngle = 0.0;
     }
-    console.log("camera: " + camera + " | " + "cameraAngle: " + cameraAngle + " | " + 
-      "sin: " + Math.sin(glMatrix.glMatrix.toRadian(cameraAngle)) + " | " + 
-      "cos: " + Math.cos(glMatrix.glMatrix.toRadian(cameraAngle)) + " | " + 
-      "focal:" + focal);
+    console.log("camera: (" + camera[0] + ", " + camera[2] + ") | " + 
+      "cameraAngle: " + (-cameraAngle) + " | " + 
+      "focal: (" + focal[0] + ", " + focal[2] + ")");
   }
   document.addEventListener('keydown', onKeyDown);
 
