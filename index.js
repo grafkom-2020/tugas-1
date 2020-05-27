@@ -227,20 +227,56 @@ var leftFragmentShaderCode = `
   var rightLocModelView = rightGL.getUniformLocation(rightProgram, 'modelView');
   var model = glMatrix.mat4.create();
   var view = glMatrix.mat4.create();
-  glMatrix.mat4.lookAt(view,
-    [2.5, 3.5, 5.5], // posisi kamera
-    [0.0, 0.0, 0.0], // titik ke mana kamera melihat
-    [0.0, 1.0, 0.0]  // vektor arah atas dari kamera
-  );
+  var camera = [0.0, 1.0, 4.5];
+  var focal = [0.0, 1.0, -5.1];
+  var cameraAngle = 0.0;
   var modelView = glMatrix.mat4.create();
-  glMatrix.mat4.multiply(modelView, view, model);
-  rightGL.uniformMatrix4fv(rightLocModelView, false, modelView);
 
   // Definisi untuk matriks model vektor-vektor normal
   var rightLocNormal = rightGL.getUniformLocation(rightProgram, 'normal');
   var normal = glMatrix.mat3.create();
   glMatrix.mat3.normalFromMat4(normal, model);
   rightGL.uniformMatrix3fv(rightLocNormal, false, normal);
+
+  // Interaksi dengan keyboard
+  var walkingSpeed = 0.5;
+  function onKeyDown(event) {
+    if (event.keyCode == 38) { // atas
+      var nextX = walkingSpeed * Math.sin(glMatrix.glMatrix.toRadian(-cameraAngle));
+      var nextZ = walkingSpeed * Math.cos(glMatrix.glMatrix.toRadian(-cameraAngle)); 
+      if (camera[0] + nextX >= 5.0 ||
+          camera[0] + nextX <= -5.0 ||
+          camera[2] - nextZ >= 5.0 ||
+          camera[2] - nextZ <= -5.0) {
+            console.log("WALL");
+      } else {
+        camera[0] += nextX;
+        camera[2] -= nextZ;
+      }
+    } else if (event.keyCode == 40) {  // bawah
+      var nextX = walkingSpeed * Math.sin(glMatrix.glMatrix.toRadian(-cameraAngle));
+      var nextZ = walkingSpeed * Math.cos(glMatrix.glMatrix.toRadian(-cameraAngle)); 
+      if (camera[0] - nextX >= 5.0 ||
+          camera[0] - nextX <= -5.0 ||
+          camera[2] + nextZ >= 5.0 ||
+          camera[2] + nextZ <= -5.0) {
+            console.log("WALL");
+      } else {
+        camera[0] -= nextX;
+        camera[2] += nextZ;
+      }
+    } else if (event.keyCode == 37) { // kiri
+      cameraAngle += 10.0;
+      glMatrix.vec3.rotateY(focal, [camera[0], 1.0, -5.1], camera, glMatrix.glMatrix.toRadian(cameraAngle));
+    } else if (event.keyCode == 39) { // kanan
+      cameraAngle -= 10.0;
+      glMatrix.vec3.rotateY(focal, [camera[0], 1.0, -5.1], camera, glMatrix.glMatrix.toRadian(cameraAngle));
+    } else if (event.keyCode == 32) { // spasi
+      camera = [0.0, 1.0, 4.5];
+      focal = [0.0, 1.0, -5.1];
+    }
+  }
+  document.addEventListener('keydown', onKeyDown);
 
   // Persiapan tampilan layar dan mulai menggambar secara berulang (animasi)
   function render() {
@@ -249,6 +285,13 @@ var leftFragmentShaderCode = `
     leftGL.clear(leftGL.COLOR_BUFFER_BIT | leftGL.DEPTH_BUFFER_BIT);
     leftGL.drawArrays(leftGL.TRIANGLES, 0, 12);
     rightGL.uniform1f(rightLocDiffuseAngle, diffuseAngle);
+    glMatrix.mat4.lookAt(view,
+      camera, // posisi kamera
+      focal, // titik ke mana kamera melihat
+      [0.0, 1.0, 0.0]  // vektor arah atas dari kamera
+    );
+    glMatrix.mat4.multiply(modelView, view, model);
+    rightGL.uniformMatrix4fv(rightLocModelView, false, modelView);
     rightGL.clear(rightGL.COLOR_BUFFER_BIT | rightGL.DEPTH_BUFFER_BIT);
     rightGL.drawArrays(rightGL.TRIANGLES, 0, 42);
     requestAnimationFrame(render);
