@@ -210,7 +210,7 @@ var leftFragmentShaderCode = `
   var rightColor = rightGL.getAttribLocation(rightProgram, "aColor");
   rightGL.vertexAttribPointer(rightColor, 3, rightGL.FLOAT, false, 9 * Float32Array.BYTES_PER_ELEMENT, 3 * Float32Array.BYTES_PER_ELEMENT);
   rightGL.enableVertexAttribArray(rightColor);
-  var rightNormal = rightGL.getAttribLocation(rightProgram, "aColor");
+  var rightNormal = rightGL.getAttribLocation(rightProgram, "aNormal");
   rightGL.vertexAttribPointer(rightNormal, 3, rightGL.FLOAT, false, 9 * Float32Array.BYTES_PER_ELEMENT, 6 * Float32Array.BYTES_PER_ELEMENT);
   rightGL.enableVertexAttribArray(rightNormal);
 
